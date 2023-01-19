@@ -31,9 +31,9 @@ namespace WinFormsApp2.Domains
             domain.SetNodeSize(new Size(120, 100));
 
             //вершины графов
-            NumberedDCNode Sick = ConstructNDC("sick", "sick", 2, new string[] { "sick", "no" });
-            NumberedDCNode Dry = ConstructNDC("dry", "dry", 2, new string[] { "dry", "no" });
-            NumberedDCNode Loses = ConstructNDC("loses", "loses", 2, new string[] { "yes", "no" });
+            NumberedDCNode Sick = ConstructNDC("sick", "sick", new string[] { "sick", "no" });
+            NumberedDCNode Dry = ConstructNDC("dry", "dry", new string[] { "dry", "no" });
+            NumberedDCNode Loses = ConstructNDC("loses", "loses", new string[] { "yes", "no" });
 
             //построение структуры
             BuildStructure(Sick, Dry, Loses);
@@ -48,20 +48,18 @@ namespace WinFormsApp2.Domains
         /// </summary>
         /// <param name="label">название вершины</param>
         /// <param name="name">внутренее имя веришины</param>
-        /// <param name="n">количество состояний вершины </param>
         /// <param name="nameState"> имя состояния</param>
         /// <returns>ссылка на вершину </returns>
-        protected NumberedDCNode ConstructNDC(string label, string name, size_t n, string[] nameState)
+        protected NumberedDCNode ConstructNDC(string label, string name, string[] nameState)
         {
             NumberedDCNode node = new NumberedDCNode(domain);
             //количесво состояний
-            node.SetNumberOfStates(n);
+            node.SetNumberOfStates((size_t)nameState.Length);
 
             //добавление значений и наименование вершин
-            for (size_t i = 0; i < n; i++)
+            for (int i = 0; i < nameState.Length; i++)
             {
-                node.SetStateValue(i, i);
-                node.SetStateLabel(i, nameState[i]);
+                node.SetStateLabel((size_t)i, nameState[i]);
             }
             //навзание вершины графа
             node.SetLabel(label);
@@ -106,7 +104,7 @@ namespace WinFormsApp2.Domains
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="dataProbability">массив вероятносей</param>
+        /// <param name="dataProbability">массив вероятностей</param>
         /// <param name="Node">веришина домен</param>
         private void FillTable(h_number_t[] dataProbability, NumberedDCNode Node)
         {
