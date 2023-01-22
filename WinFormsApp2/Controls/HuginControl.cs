@@ -15,6 +15,7 @@ namespace WinFormsApp2.Controls
     {
         private Domain domain = null;
 
+        //режим отражения 
         private bool view = true;
 
         public HuginControl()
@@ -24,17 +25,24 @@ namespace WinFormsApp2.Controls
             AutoScroll = true;
         }
 
+        /// <summary>
+        /// взятие домена из файла
+        /// </summary>
+        /// <param name="path">путь к домену</param>
+        /// <param name="view">метод представления: таблица или общая структура</param>
         public void GetDomainFromFile(string path, bool view)
         {
             this.view = view;
             try
             {
+                //создание домена, парсинг файла парсером по-умолчанию
                 Domain dom = new Domain(path, new DefaultClassParseListener());
+
                 if (domain != null && domain.IsAlive() == true)
                     domain.Delete();
                 domain = dom;
-                domain.Compile();
-                RawDomain();
+                domain.Compile();//компиляция домена
+                RawDomain();//метод отрисовки домена
             }
             catch (ExceptionHugin eh)
             {
@@ -44,26 +52,31 @@ namespace WinFormsApp2.Controls
 
         private void RawDomain()
         {
-            Controls.Clear();
+            Controls.Clear();//очистка области для рисования
             NodeList list = domain.GetNodes();
+            //в заиимости от выбранного вида 
             if (view)
-            {
+            {//рисуем квадраты
                 foreach (Node node in list)
                     if (node is DiscreteChanceNode)
+                        //для дискретных вершины
                         Controls.Add(new DCMonitor((DiscreteChanceNode)node));
                     else if (node is ContinuousChanceNode)
+                        //для непрерывных вершины
                         Controls.Add(new CCMonitor((ContinuousChanceNode)node));
             }
             else
-            {
+            { //рисуем овалы
                 foreach (Node node in list)
                     if (node is DiscreteChanceNode)
+                        //для  дискретных вершины
                         Controls.Add(new VisibleDCNode((DiscreteChanceNode)node));
                     else
+                        //для остальных
                         Controls.Add(new VisibleNode(node));
 
             }
-            Refresh();
+            Refresh();//вызов базового метода для перересовки элемента
         }
 
         public void GetDomain(Domain dom, bool view)
@@ -83,6 +96,10 @@ namespace WinFormsApp2.Controls
             }
         }
 
+        /// <summary>
+        /// переопределяем метод отрисовки
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnPaintBackground(PaintEventArgs e)
         {
             try
@@ -94,12 +111,13 @@ namespace WinFormsApp2.Controls
                     foreach (Node node in list)
                         foreach (Node n in node.GetChildren())
                         {
-                            //получение координат начала линии
                             Point locationOffset = new Point(domain.GetNodeSize().Width / 2,
                                                               domain.GetNodeSize().Height / 2);
+                            //получение координат начала линии
                             Point from = node.GetPosition();
                             Point to = n.GetPosition();
 
+                            //сдвиги координат
                             from.Offset(AutoScrollPosition);
                             from.Offset(locationOffset);
                             to.Offset(AutoScrollPosition);
@@ -113,11 +131,11 @@ namespace WinFormsApp2.Controls
 
                             if (!view)
                             {
-                                interectPoint = pointOnCycle(to, from); //высисление точек пересечения овала и линии
-                             }
+                                interectPoint = pointOnCycle(to, from); //вычисление точек пересечения овала и линии
+                            }
                             else
                             {
-                                interectPoint = pointOnRect(n, from); //высисление точек пересесчения квадрата и линии
+                                interectPoint = pointOnRect(n, from); //вычисление точек пересесчения квадрата и линии
                             }
 
                             e.Graphics.DrawLine(pen, from, interectPoint); //рисование стрелки от одного узла до другого
