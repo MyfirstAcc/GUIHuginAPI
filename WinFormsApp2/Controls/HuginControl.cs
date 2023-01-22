@@ -56,7 +56,7 @@ namespace WinFormsApp2.Controls
             NodeList list = domain.GetNodes();
             //в заиимости от выбранного вида 
             if (view)
-            {//рисуем квадраты
+            {//рисуем прямоугольники
                 foreach (Node node in list)
                     if (node is DiscreteChanceNode)
                         //для дискретных вершины
@@ -135,7 +135,8 @@ namespace WinFormsApp2.Controls
                             }
                             else
                             {
-                                interectPoint = pointOnRect(n, from); //вычисление точек пересесчения квадрата и линии
+                                interectPoint = pointOnRect(n, from); //вычисление
+                                                                      //точек пересесчения прямоугольника и линии
                             }
 
                             e.Graphics.DrawLine(pen, from, interectPoint); //рисование стрелки от одного узла до другого
