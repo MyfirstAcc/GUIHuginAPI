@@ -7,18 +7,18 @@
     </Compartments>
     <NestedTypes>
       <Class Name="WinFormsApp2.Controls.HuginControl.DCMonitor" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Controls\HuginControl.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Class>
-      <Class Name="WinFormsApp2.Controls.HuginControl.CCMonitor" Collapsed="true">
         <NestedTypes>
-          <Class Name="WinFormsApp2.Controls.HuginControl.CCMonitor.State" Collapsed="true">
+          <Class Name="WinFormsApp2.Controls.HuginControl.DCMonitor.State" Collapsed="true">
             <TypeIdentifier>
               <NewMemberFileName>Controls\HuginControl.cs</NewMemberFileName>
             </TypeIdentifier>
           </Class>
         </NestedTypes>
+        <TypeIdentifier>
+          <NewMemberFileName>Controls\HuginControl.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="WinFormsApp2.Controls.HuginControl.CCMonitor" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>Controls\HuginControl.cs</NewMemberFileName>
         </TypeIdentifier>

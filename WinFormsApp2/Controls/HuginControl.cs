@@ -30,7 +30,6 @@ namespace WinFormsApp2.Controls
             try
             {
                 Domain dom = new Domain(path, new DefaultClassParseListener());
-                Controls.Clear();
                 if (domain != null && domain.IsAlive() == true)
                     domain.Delete();
                 domain = dom;
@@ -40,14 +39,15 @@ namespace WinFormsApp2.Controls
             catch (ExceptionHugin eh)
             {
                 MessageBox.Show(eh.Message);
-            }           
-        }        
+            }
+        }
 
         private void RawDomain()
         {
+            Controls.Clear();
             NodeList list = domain.GetNodes();
             if (view)
-            {               
+            {
                 foreach (Node node in list)
                     if (node is DiscreteChanceNode)
                         Controls.Add(new DCMonitor((DiscreteChanceNode)node));
@@ -70,8 +70,7 @@ namespace WinFormsApp2.Controls
         {
             this.view = view;
             try
-            {            
-                Controls.Clear(); //очищение области рисования
+            {
                 if (domain != null && domain.IsAlive() == true) //существует ли домен
                     domain.Delete();
                 domain = dom;
@@ -95,7 +94,7 @@ namespace WinFormsApp2.Controls
                     foreach (Node node in list)
                         foreach (Node n in node.GetChildren())
                         {
-                            //рисование линии
+                            //получение координат начала линии
                             Point locationOffset = new Point(domain.GetNodeSize().Width / 2,
                                                               domain.GetNodeSize().Height / 2);
                             Point from = node.GetPosition();
@@ -105,24 +104,23 @@ namespace WinFormsApp2.Controls
                             from.Offset(locationOffset);
                             to.Offset(AutoScrollPosition);
                             to.Offset(locationOffset);
-                           
-                            
-                            //отрисовка стрелки
-                            Pen pen = new Pen(Color.Black, 1);
+
+                            //получение координат для окончания линии
+
+                            Pen pen = new Pen(Color.Black, 1);//перо для рисования
+                            pen.CustomEndCap = new AdjustableArrowCap(7, 7); //рисование стрелки на конце линии
+                            PointF interectPoint;
+
                             if (!view)
                             {
-                                e.Graphics.DrawLine(pen, from,to);
-                                PointF[] arrow = pointOnCycle(to, from);
-                                e.Graphics.FillPolygon(new SolidBrush(Color.Black), arrow); ;
-                            }
+                                interectPoint = pointOnCycle(to, from); //высисление точек пересечения овала и линии
+                             }
                             else
                             {
-                                
-                                pen.CustomEndCap = new AdjustableArrowCap(7, 7);
-                                PointF interectPoint = pointOnRect(from.X, from.Y, n.GetPosition().X, n.GetPosition().Y,
-                                    n.GetPosition().X + domain.GetNodeSize().Width, n.GetPosition().Y + domain.GetNodeSize().Height, true);
-                                e.Graphics.DrawLine(pen, from, interectPoint);
-                            }                            
+                                interectPoint = pointOnRect(n, from); //высисление точек пересесчения квадрата и линии
+                            }
+
+                            e.Graphics.DrawLine(pen, from, interectPoint); //рисование стрелки от одного узла до другого
                         }
                 }
             }
@@ -143,9 +141,18 @@ namespace WinFormsApp2.Controls
         /// <param name="validate">проверка на то, что пересечение есть</param>
         /// <returns>координаты пересечения прямоугольника и линии</returns>
         /// <exception cref="ArgumentException"></exception>
-        private PointF pointOnRect(float x, float y, float minX, float minY, float maxX, float maxY, bool validate)
+        private PointF pointOnRect(Node rect, Point from)
         {
-         if (validate && minX < x && x < maxX && minY < y && y < maxY)
+            float x, y, minX, minY, maxX, maxY;
+            x = from.X; y = from.Y;
+
+            minX = rect.GetPosition().X;
+            minY = rect.GetPosition().Y;
+
+            maxX = rect.GetPosition().X + domain.GetNodeSize().Width;
+            maxY = rect.GetPosition().Y + domain.GetNodeSize().Height;
+
+            if (minX < x && x < maxX && minY < y && y < maxY)
                 throw new ArgumentException("Point " + x + y + "cannot be inside "
                     + "the rectangle: " + minX + minY + " - " + maxX + maxY + ".");
             float midX = (minX + maxX) / 2;
@@ -154,28 +161,28 @@ namespace WinFormsApp2.Controls
             float m = (midY - y) / (midX - x);
 
             if (x <= midX)
-            { // check "left" side
+            { // проверка левой строны
                 var minXy = m * (minX - x) + y;
                 if (minY <= minXy && minXy <= maxY)
                     return new PointF(minX, minXy);
             }
 
             if (x >= midX)
-            { // check "right" side
+            { // проверка правой стороны
                 var maxXy = m * (maxX - x) + y;
                 if (minY <= maxXy && maxXy <= maxY)
                     return new PointF(maxX, maxXy);
             }
 
             if (y <= midY)
-            { // check "top" side
+            { // проверка верха
                 var minYx = (minY - y) / m + x;
                 if (minX <= minYx && minYx <= maxX)
                     return new PointF(minYx, minY);
             }
 
             if (y >= midY)
-            { // check "bottom" side
+            { // проверка низа
                 var maxYx = (maxY - y) / m + x;
                 if (minX <= maxYx && maxYx <= maxX)
                     return new PointF(maxYx, maxY);
@@ -183,16 +190,15 @@ namespace WinFormsApp2.Controls
 
             if (x == midX && y == midY) return new PointF(x, y);
 
-            // Should never happen :) If it does, please tell me!
+            // на всякий случай
             throw new ArgumentException("Cannot find intersection for " + x + y
                 + " inside rectangle " + minX + minY + " - " + maxX + maxY + ".");
-            
+
 
         }
 
-        private PointF[] pointOnCycle(Point to, Point from)
+        private PointF pointOnCycle(Point to, Point from)
         {
-            //draw arrow head
             float scaleX = domain.GetNodeSize().Width / 2;
             float scaleY = domain.GetNodeSize().Height / 2;
             float scaleCos = (to.X - from.X) * ((float)domain.GetNodeSize().Height
@@ -206,13 +212,8 @@ namespace WinFormsApp2.Controls
             float norm2 = 1f / (float)Math.Sqrt(cos * cos + sin * sin);
             cos *= norm2;
             sin *= norm2;
-            PointF[] arrow = {new PointF( to.X - scaleCos * scaleX-cos*15f - sin*7.5f,
-                                                          to.Y - scaleSin * scaleY - sin*15f + cos*7.5f),
-                                new PointF(to.X - scaleCos * scaleX, to.Y - scaleSin * scaleY),
-                                new PointF( to.X - scaleCos * scaleX-cos*15f + sin*7.5f,
-                                            to.Y - scaleSin * scaleY - sin*15f - cos*7.5f),
-                            };
-            return arrow;
+            return new PointF(to.X - scaleCos * scaleX - cos - sin,
+                to.Y - scaleSin * scaleY - sin + cos);
         }
 
         public class DCMonitor : FlowLayoutPanel
@@ -236,7 +237,7 @@ namespace WinFormsApp2.Controls
                 BorderStyle = BorderStyle.FixedSingle;
                 AutoScroll = true;
                 Width = 150;
-                Height = 100; 
+                Height = 100;
                 Debug.WriteLine("S " + node.GetHome().GetNodeSize());
                 Label lbl = new Label();
                 lbl.Text = node.GetName() + ": " + node.GetLabel();
@@ -405,7 +406,7 @@ namespace WinFormsApp2.Controls
                             return "";
                         };
 
-                        
+
                         double value = node.GetAlpha(0);
                         if (InputBox.Show("Введите Mean!", "Введите Mean:", ref value, valid) == DialogResult.OK)
                         {
@@ -454,10 +455,10 @@ namespace WinFormsApp2.Controls
                 Size = node.GetHome().GetNodeSize();
                 Location = node.GetPosition();
                 monitor = new DCMonitor(node);
-               
+
             }
 
-           
+
 
             protected override CreateParams CreateParams
             {
@@ -492,7 +493,7 @@ namespace WinFormsApp2.Controls
                 node = theNode;
                 Size = node.GetHome().GetNodeSize();
                 Location = node.GetPosition();
-                
+
             }
 
             protected override CreateParams CreateParams

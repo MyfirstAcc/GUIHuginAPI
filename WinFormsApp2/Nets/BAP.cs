@@ -12,15 +12,20 @@ namespace WinFormsApp2.Domains
     public class SimpleBN
     {
         protected Domain domain;
-
+        
         public SimpleBN(Domain domain)
         {
             this.domain = domain;
             BuildNetwork();
             domain.SaveAsNet("simpleBn.net");
         }
-
-       
+        
+        public SimpleBN()
+        {
+            domain = new Domain();
+            BuildNetwork();
+            domain.SaveAsNet("simpleBn.net");
+        }
 
         /// <summary>
         /// Инициализация сети
