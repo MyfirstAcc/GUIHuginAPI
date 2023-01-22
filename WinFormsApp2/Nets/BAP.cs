@@ -11,14 +11,7 @@ namespace WinFormsApp2.Domains
     /// </summary>
     public class SimpleBN
     {
-        protected Domain domain;
-        
-        public SimpleBN(Domain domain)
-        {
-            this.domain = domain;
-            BuildNetwork();
-            domain.SaveAsNet("simpleBn.net");
-        }
+        protected Domain domain; 
         
         public SimpleBN()
         {
@@ -27,8 +20,16 @@ namespace WinFormsApp2.Domains
             domain.SaveAsNet("simpleBn.net");
         }
 
+        public SimpleBN(Domain domain)
+        {
+            this.domain = domain;
+            BuildNetwork(); 
+            domain.SaveAsNet("simpleBn.net");
+        }
+
+
         /// <summary>
-        /// Инициализация сети
+        /// Построение байесовской сети
         /// </summary>
         public void BuildNetwork()
         {
@@ -49,7 +50,7 @@ namespace WinFormsApp2.Domains
         }
 
         /// <summary>
-        /// Начальная настройка вершины
+        /// Создание пронумерованной вершины дискретного шанса
         /// </summary>
         /// <param name="label">название вершины</param>
         /// <param name="name">внутренее имя веришины</param>
@@ -75,7 +76,7 @@ namespace WinFormsApp2.Domains
 
 
         /// <summary>
-        /// 
+        /// Построение структуры сети
         /// </summary>
         /// <param name="Sick"></param>
         /// <param name="Dry"></param>
@@ -107,21 +108,14 @@ namespace WinFormsApp2.Domains
         }
 
         /// <summary>
-        /// 
+        /// заполненение таблицы для определенного узла
         /// </summary>
         /// <param name="dataProbability">массив вероятностей</param>
-        /// <param name="Node">веришина домен</param>
+        /// <param name="Node">веришина домена</param>
         private void FillTable(h_number_t[] dataProbability, NumberedDCNode Node)
         {
-            Table table = Node.GetTable(); //таблица узла
-            h_number_t[] data = table.GetData(); //сами значения узла
-
-            for (size_t i = 0; i < (size_t)dataProbability.Length; i++)
-            {
-                data[i] = dataProbability[i];
-            }
-
-            table.SetData(data);
+            Table table = Node.GetTable(); //таблица узла      
+            table.SetData(dataProbability);
         }
 
     }
