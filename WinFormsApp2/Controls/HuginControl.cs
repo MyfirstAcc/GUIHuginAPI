@@ -463,7 +463,7 @@ namespace WinFormsApp2.Controls
             }
         }
 
-        public class VisibleDCNode : System.Windows.Forms.UserControl
+        public class VisibleDCNode : UserControl
         {
             private DCMonitor monitor;
             private DiscreteChanceNode node;
@@ -489,11 +489,6 @@ namespace WinFormsApp2.Controls
                 }
             }
 
-            protected override void OnPaintBackground(PaintEventArgs e)
-            {
-                //empty
-            }
-
             protected override void OnPaint(PaintEventArgs pevent)
             {
                 pevent.Graphics.FillEllipse(Brushes.LightYellow, 0, 0, Width - 1, Height - 1);
@@ -503,7 +498,7 @@ namespace WinFormsApp2.Controls
             }
         }
 
-        public class VisibleNode : System.Windows.Forms.UserControl
+        public class VisibleNode : UserControl
         {
             private Node node;
 
