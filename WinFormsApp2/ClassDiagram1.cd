@@ -6,9 +6,12 @@
       <Compartment Name="Nested Types" Collapsed="false" />
     </Compartments>
     <NestedTypes>
-      <Class Name="WinFormsApp2.Controls.HuginControl.DCMonitor" Collapsed="true">
+      <Class Name="WinFormsApp2.Controls.HuginControl.DCMonitor">
+        <Compartments>
+          <Compartment Name="Nested Types" Collapsed="false" />
+        </Compartments>
         <NestedTypes>
-          <Class Name="WinFormsApp2.Controls.HuginControl.DCMonitor.State" Collapsed="true">
+          <Class Name="WinFormsApp2.Controls.HuginControl.DCMonitor.State">
             <TypeIdentifier>
               <NewMemberFileName>Controls\HuginControl.cs</NewMemberFileName>
             </TypeIdentifier>
@@ -18,17 +21,27 @@
           <NewMemberFileName>Controls\HuginControl.cs</NewMemberFileName>
         </TypeIdentifier>
       </Class>
-      <Class Name="WinFormsApp2.Controls.HuginControl.CCMonitor" Collapsed="true">
+      <Class Name="WinFormsApp2.Controls.HuginControl.CCMonitor">
+        <Compartments>
+          <Compartment Name="Nested Types" Collapsed="false" />
+        </Compartments>
+        <NestedTypes>
+          <Class Name="WinFormsApp2.Controls.HuginControl.CCMonitor.State">
+            <TypeIdentifier>
+              <NewMemberFileName>Controls\HuginControl.cs</NewMemberFileName>
+            </TypeIdentifier>
+          </Class>
+        </NestedTypes>
         <TypeIdentifier>
           <NewMemberFileName>Controls\HuginControl.cs</NewMemberFileName>
         </TypeIdentifier>
       </Class>
-      <Class Name="WinFormsApp2.Controls.HuginControl.VisibleDCNode" Collapsed="true">
+      <Class Name="WinFormsApp2.Controls.HuginControl.VisibleDCNode">
         <TypeIdentifier>
           <NewMemberFileName>Controls\HuginControl.cs</NewMemberFileName>
         </TypeIdentifier>
       </Class>
-      <Class Name="WinFormsApp2.Controls.HuginControl.VisibleNode" Collapsed="true">
+      <Class Name="WinFormsApp2.Controls.HuginControl.VisibleNode">
         <TypeIdentifier>
           <NewMemberFileName>Controls\HuginControl.cs</NewMemberFileName>
         </TypeIdentifier>
@@ -40,7 +53,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="WinFormsApp2.FormMain">
-    <Position X="3.5" Y="0.75" Width="1.75" />
+    <Position X="3" Y="1" Width="1.75" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
