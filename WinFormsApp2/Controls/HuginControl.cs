@@ -1,10 +1,10 @@
 ﻿using HAPI;
-using System;
-using size_t = System.UInt64;
-using System.Drawing.Drawing2D;
 using System.Diagnostics;
+using System.Drawing.Drawing2D;
+using System.Globalization;
 using System.Text.RegularExpressions;
-
+using h_number_t = System.Double;
+using size_t = System.UInt64;
 
 namespace WinFormsApp2.Controls
 {
@@ -14,6 +14,8 @@ namespace WinFormsApp2.Controls
     public class HuginControl : Panel
     {
         private Domain domain = null;
+        protected float zoom = 1f;
+
 
         //режим отражения 
         private bool view = true;
@@ -24,6 +26,8 @@ namespace WinFormsApp2.Controls
             BorderStyle = BorderStyle.Fixed3D;
             AutoScroll = true;
         }
+
+
 
         /// <summary>
         /// взятие домена из файла
@@ -36,7 +40,8 @@ namespace WinFormsApp2.Controls
             try
             {
                 //создание домена, парсинг файла парсером по-умолчанию
-                Domain dom = new Domain(path, new DefaultClassParseListener());
+                Domain dom = new Domain("iric_classifie.net", new DefaultClassParseListener());
+
 
                 if (domain != null && domain.IsAlive() == true)
                     domain.Delete();
@@ -102,6 +107,8 @@ namespace WinFormsApp2.Controls
         /// <param name="e"></param>
         protected override void OnPaintBackground(PaintEventArgs e)
         {
+
+            e.Graphics.ScaleTransform(zoom, zoom);
             try
             {
                 base.OnPaintBackground(e);
@@ -209,7 +216,7 @@ namespace WinFormsApp2.Controls
 
             if (x == midX && y == midY) return new PointF(x, y);
 
-            // на всякий случай
+            // навсякий случай
             throw new ArgumentException("Cannot find intersection for " + x + y
                 + " inside rectangle " + minX + minY + " - " + maxX + maxY + ".");
 
@@ -255,9 +262,8 @@ namespace WinFormsApp2.Controls
                 BackColor = Color.White;
                 BorderStyle = BorderStyle.FixedSingle;
                 AutoScroll = true;
-                Width = 150;
-                Height = 100;
-                Debug.WriteLine("S " + node.GetHome().GetNodeSize());
+                Width = 160;
+                Height = 130;
                 Label lbl = new Label();
                 lbl.Text = node.GetName() + ": " + node.GetLabel();
                 lbl.MouseClick += MouseClickHandler;
@@ -283,25 +289,86 @@ namespace WinFormsApp2.Controls
                 Parent.Refresh();
             }
 
-
-
             private class State : UserControl
             {
                 size_t stateNumber = 0;
                 DiscreteChanceNode node;
 
-
                 public State(DiscreteChanceNode dcNode, size_t state)
                 {
 
-                    Width = 140;
+                    Width = 150;
                     Height = 20;
                     BackColor = Color.White;
                     stateNumber = state;
                     node = dcNode;
                     MouseDoubleClick += MouseDoubleClickHandler;
+                    MouseClick += MouseClickHandler;
 
 
+                }
+
+                private void MouseClickHandler(object sender, MouseEventArgs e)
+                {
+
+                    if (node.GetName() == "loses")
+                    {
+                        Table table = node.GetTable();
+
+                        table.SetDataItem(1, 0.9);
+
+                        node.GetHomeDomain().Propagate(Domain.Equilibrium.H_EQUILIBRIUM_SUM,
+                                                     Domain.EvidenceMode.H_EVIDENCE_MODE_NORMAL);
+
+                        ((DCMonitor)Parent).RedrawNet();
+                    }
+
+
+
+                    /*Debug.WriteLine("n");
+                    InputBoxValidation valid = delegate (string val)
+                       {
+                           if (val == "")
+                           {
+                               return "Value cannot empty.";
+                           }
+                           if (!(new Regex(@"^\d+,\d+|^\d+$")).IsMatch(val))
+                               return "Error!Numbers only";
+                           return "";
+                       };
+
+
+                    double value = node.GetBelief(stateNumber);
+                    if (InputBox.Show("Введите Mean!", "Введите Mean:", ref value, valid) == DialogResult.OK)
+                    {
+                        node.RetractFindings();
+                        Table table = node.GetTable();
+                        
+
+                        //double t = 1 - value;
+                       h_number_t[] d = new h_number_t[table.GetSize()];
+
+                        for (size_t i = 0; i < table.GetSize(); i++)
+                        {
+                            if (i == stateNumber)
+                            {
+                                d[i] = value;
+                            }
+                            else
+                            {
+                                d[i] = table[i];
+                            }
+                        }
+
+                        table.SetData(d);
+
+                        node.GetHomeDomain().Propagate(Domain.Equilibrium.H_EQUILIBRIUM_SUM,
+                                                       Domain.EvidenceMode.H_EVIDENCE_MODE_NORMAL);
+
+                        ((DCMonitor)Parent).RedrawNet();
+
+                    }
+                    */
                 }
 
                 private void MouseDoubleClickHandler(object sender, MouseEventArgs e)
@@ -347,6 +414,8 @@ namespace WinFormsApp2.Controls
 
         public class CCMonitor : FlowLayoutPanel
         {
+
+
             private ContinuousChanceNode node;
             protected override CreateParams CreateParams
             {
@@ -363,9 +432,11 @@ namespace WinFormsApp2.Controls
                 MouseMove += MouseMoveHandler;
                 MouseClick += MouseClickHandler;
                 BackColor = Color.White;
+                Width = 130;
+                Height = 100;
                 BorderStyle = BorderStyle.FixedSingle;
-                AutoScroll = true;
-                Size = node.GetHome().GetNodeSize();
+                AutoScroll = false;
+
                 Label lbl = new Label();
                 lbl.Text = node.GetName() + ": " + node.GetLabel();
                 lbl.MouseClick += MouseClickHandler;
@@ -373,16 +444,35 @@ namespace WinFormsApp2.Controls
                 Controls.Add(lbl);
                 var rows = new string[] { string.Format("{0, -10} {1, 5}", "Mean", node.GetMean()),
                     string.Format("{0, -10} {1, 5}", "Variance", node.GetVariance()) };
-                for (int i = 0; i < 2; i++)
-                {
-                    Controls.Add(new State(node, rows[i]));
-                }
+
+
+               
+                    Controls.Add(new State(node));
+                
+                
+            
+
                 Location = node.GetPosition();
             }
 
             private void MouseClickHandler(object sender, MouseEventArgs e)
             {
-                BringToFront();
+                /*BringToFront();
+                InputBoxValidation validation = delegate (string val)
+                {
+                    if (val == "")
+                        return "Value cannot be empty.";
+                    if (!(new Regex(@"[0-9].[0-9]")).IsMatch(val))
+                        return "Невверные данные! Повторите ввод!";
+                    return "";
+                };
+
+                double value = double.MaxValue;
+                if (InputBox.Show("Непрерывное событие", "Матожидание:", ref value, validation) == DialogResult.OK)
+                {
+                    MessageBox.Show(value.ToString("G", CultureInfo.CreateSpecificCulture("eu-ES")));
+                }*/
+
             }
 
             private void MouseMoveHandler(object sender, MouseEventArgs e)
@@ -399,17 +489,42 @@ namespace WinFormsApp2.Controls
             {
                 string row;
                 ContinuousChanceNode node;
+                TextBox txtbox;
 
-                public State(ContinuousChanceNode ccNode, string row)
+                public State(ContinuousChanceNode ccNode)
                 {
-                    Width = 140;
-                    Height = 20;
+                    Width = 150;
+                    Height = 45;
                     node = ccNode;
                     BackColor = Color.White;
                     this.row = row;
                     MouseDoubleClick += MouseDoubleClickHandler;
+                    txtbox = new TextBox();
+                    txtbox.BackColor = Color.Thistle;
+                    txtbox.KeyPress += KeyPressHandler;
                 }
 
+
+                private void KeyPressHandler(object sender, KeyPressEventArgs e)
+                {
+                    if (!char.IsDigit(e.KeyChar) && e.KeyChar != 8 && e.KeyChar != 44)
+                    {
+                        e.Handled = true;
+                    }
+
+                    if (e.KeyChar == (char)Keys.Return)
+                    {
+                        Debug.WriteLine(txtbox.Text);
+                        node.RetractFindings();
+                        node.EnterValue(h_number_t.Parse(txtbox.Text));
+                        node.GetHomeDomain().Propagate(Domain.Equilibrium.H_EQUILIBRIUM_SUM,
+                                                       Domain.EvidenceMode.H_EVIDENCE_MODE_NORMAL);
+
+                        ((CCMonitor)Parent).RedrawNet();
+                    }
+
+                    
+                }
                 private void MouseDoubleClickHandler(object sender, MouseEventArgs e)
                 {
                     try
@@ -424,10 +539,9 @@ namespace WinFormsApp2.Controls
                                 return "Error!Numbers only";
                             return "";
                         };
-
-
-                        double value = node.GetAlpha(0);
-                        if (InputBox.Show("Введите Mean!", "Введите Mean:", ref value, valid) == DialogResult.OK)
+                      
+                        double value = node.GetMean();
+                        if (InputBox.Show("Введите значение "+ node.GetName(), "Введите Mean:", ref value, valid) == DialogResult.OK)
                         {
                             node.RetractFindings();
                             node.EnterValue(value);
@@ -442,6 +556,9 @@ namespace WinFormsApp2.Controls
                         MessageBox.Show(eh.Message);
                     }
                 }
+
+
+
                 protected override void OnPaint(PaintEventArgs e)
                 {
                     try
@@ -449,10 +566,13 @@ namespace WinFormsApp2.Controls
                         base.OnPaint(e);
                         Graphics g = e.Graphics;
                         Brush fillBrush = node.EvidenceIsEntered() ? Brushes.Red : Brushes.Azure;
-                        g.FillRectangle(fillBrush, 0, 0, Width, Height - 1);
-                        g.DrawString(row, new Font("Microsoft Sans Serif", 8.25f),
-                                     Brushes.Black, 10f, Height / 2 - 5);
-                        g.DrawRectangle(Pens.Black, 0, 0, Width - 1, Height - 1);
+                        Label lbl = new Label();
+                        lbl.Text = "Мат. ожид: ";
+                        txtbox.Location = new Point(0, 20);
+                        Debug.WriteLine(row);
+                        txtbox.Text = string.Format("{0}",node.GetMean());
+                        Controls.Add(lbl);
+                        Controls.Add(txtbox);                    
 
                     }
                     catch (ExceptionHugin eh)
@@ -476,8 +596,6 @@ namespace WinFormsApp2.Controls
                 monitor = new DCMonitor(node);
 
             }
-
-
 
             protected override CreateParams CreateParams
             {
@@ -527,11 +645,22 @@ namespace WinFormsApp2.Controls
 
             protected override void OnPaint(PaintEventArgs pevent)
             {
-                pevent.Graphics.FillEllipse(Brushes.Gray, 0, 0, Width - 1, Height - 1);
+                pevent.Graphics.FillEllipse(Brushes.Yellow, 0, 0, Width - 1, Height - 1);
+                pevent.Graphics.DrawEllipse(Pens.Black, 2, 2, Width-6, Height - 6);
+
                 pevent.Graphics.DrawEllipse(Pens.Black, 0, 0, Width - 1, Height - 1);
                 pevent.Graphics.DrawString(node.GetName() + ": " + node.GetLabel(),
                       new Font("Microsoft Sans Serif", 8.25f), Brushes.Black, 10f, Height / 2 - 5);
+                pevent.Graphics.DrawString(node.GetName() + ": " + node.GetAttribute("Alpha"),
+                     new Font("Microsoft Sans Serif", 8.25f), Brushes.Black, 10f, Height / 2 - 5);
             }
+        }
+
+
+        private void panel_Paint(object sender, PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+            g.ScaleTransform(2, 2);
         }
 
     }

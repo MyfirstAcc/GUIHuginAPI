@@ -6,7 +6,8 @@ namespace WinFormsApp2
 {
     public partial class FormMain : Form
     {
-        string path = Directory.GetCurrentDirectory()+ @"/simpleBn.net";
+        private About about = new About();
+        string path = Directory.GetCurrentDirectory() + @"/simpleBn.net";
 
         public FormMain()
         {
@@ -14,13 +15,7 @@ namespace WinFormsApp2
             initNet();
         }
 
-        public SimpleBN SimpleBN
-        {
-            get => default;
-            set
-            {
-            }
-        }
+
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -43,14 +38,16 @@ namespace WinFormsApp2
 
         private void initNet()
         {
-            Domain domain = new Domain();
-            new SimpleBN(domain);
-            huginControl1.GetDomain(domain, checkBox1.Checked);
+
+            huginControl1.GetDomainFromFile(path, false);
+            //  Domain domain = new Domain();
+            //new SimpleBN(domain);
+            //huginControl1.GetDomain(domain, checkBox1.Checked);
         }
 
         private void îÏðîãðàììåToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            About about = new About();
+
             about.ShowDialog();
         }
 
@@ -65,6 +62,11 @@ namespace WinFormsApp2
         private void checkBox1_Click(object sender, EventArgs e)
         {
             Open();
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

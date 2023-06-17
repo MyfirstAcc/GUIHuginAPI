@@ -1,17 +1,63 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="WinFormsApp2.Domains.SimpleBN">
+    <Position X="2.75" Y="7" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAACACAAAACAAAAAAAAAAEAAIAAAAAAAAA=</HashCode>
+      <FileName>Nets\BAP.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="domain" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="WinFormsApp2.Domains.BAPCCN2">
+    <Position X="0.75" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAACACAAAACAAAAAAAAAAEQAAAAAAAAAAA=</HashCode>
+      <FileName>Nets\BAPCCN2.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="domain" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="WinFormsApp2.Controls.InputBox">
+    <Position X="12" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controls\InputBox.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WinFormsApp2.About">
+    <Position X="1.25" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAACAAAACAAAIAAAAEEAAAAAAACA=</HashCode>
+      <FileName>About.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WinFormsApp2.FormMain">
+    <Position X="4" Y="0.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>BQAAAACQACAAoEAAAACHYAACCAAgAAAAAkAACAEAACA=</HashCode>
+      <FileName>FormMain.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="about" />
+      <Field Name="huginControl1" />
+    </ShowAsAssociation>
+  </Class>
   <Class Name="WinFormsApp2.Controls.HuginControl">
-    <Position X="7.25" Y="0.5" Width="2" />
+    <Position X="7.75" Y="0.5" Width="2.5" />
     <Compartments>
       <Compartment Name="Nested Types" Collapsed="false" />
     </Compartments>
     <NestedTypes>
       <Class Name="WinFormsApp2.Controls.HuginControl.DCMonitor">
         <Compartments>
+          <Compartment Name="Methods" Collapsed="true" />
           <Compartment Name="Nested Types" Collapsed="false" />
         </Compartments>
         <NestedTypes>
-          <Class Name="WinFormsApp2.Controls.HuginControl.DCMonitor.State">
+          <Class Name="WinFormsApp2.Controls.HuginControl.DCMonitor.State" Collapsed="true">
             <TypeIdentifier>
               <NewMemberFileName>Controls\HuginControl.cs</NewMemberFileName>
             </TypeIdentifier>
@@ -52,49 +98,17 @@
       <FileName>Controls\HuginControl.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="WinFormsApp2.FormMain">
-    <Position X="3" Y="1" Width="1.75" />
-    <Compartments>
-      <Compartment Name="Fields" Collapsed="true" />
-    </Compartments>
-    <TypeIdentifier>
-      <HashCode>BQAAAACQACAAoEAAAACGYAACCAAgAAAAAkBACAEAACA=</HashCode>
-      <FileName>FormMain.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="SimpleBN" />
-    </ShowAsAssociation>
-  </Class>
-  <Class Name="WinFormsApp2.About" Collapsed="true">
-    <Position X="2.5" Y="5.5" Width="1.75" />
-    <Compartments>
-      <Compartment Name="Fields" Collapsed="true" />
-      <Compartment Name="Methods" Collapsed="true" />
-    </Compartments>
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAACAAAAAAAACAAAACAAAIAAAAEEAAAAAAACA=</HashCode>
-      <FileName>About.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="WinFormsApp2.Domains.SimpleBN">
-    <Position X="0.5" Y="1.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>IAAAAAAAAAAACACAAAACAAAAAAAAAAEAAIAAAAAAAAA=</HashCode>
-      <FileName>Nets\BAP.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="System.Windows.Forms.Panel" Collapsed="true">
-    <Position X="9.75" Y="0.5" Width="1.5" />
-    <Compartments>
-      <Compartment Name="Events" Collapsed="true" />
-      <Compartment Name="Properties" Collapsed="true" />
-      <Compartment Name="Methods" Collapsed="true" />
-    </Compartments>
+  <Class Name="HAPI.Domain" Collapsed="true">
+    <Position X="1.5" Y="4.75" Width="1.5" />
     <TypeIdentifier />
+    <Lollipop Position="0.2" />
   </Class>
-  <Class Name="System.Windows.Forms.Form" Collapsed="true">
-    <Position X="0.5" Y="4.25" Width="1.5" />
-    <TypeIdentifier />
-  </Class>
+  <Delegate Name="WinFormsApp2.Controls.InputBoxValidation">
+    <Position X="12" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controls\InputBox.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

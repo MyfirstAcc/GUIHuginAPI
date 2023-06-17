@@ -101,11 +101,6 @@ namespace WinFormsApp2.Domains
                 }
 
             }
-
-
-
-
-
         }
 
         // Build the Bayesian network.
