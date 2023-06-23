@@ -6,9 +6,9 @@
 
 <figure class = "one">
 	<img src="WinFormsApp2/Resources/GUIHugin_ijFiuVoYn5.png" width=50% height=50%>
-	<figcaption>Режим отображения сети</figcaption>
+	<figcaption>Рис 1. Режим отображения сети</figcaption>
 </figure>
 <figure class = "two">
-	<img src="WinFormsApp2/Resources/GUIHugin_KQbIcFiOBe.pngg" width=50% height=50%>
-	<figcaption>Режим ввода свидетельств</figcaption>
+	<img src="WinFormsApp2/Resources/GUIHugin_KQbIcFiOBe.png" width=50% height=50%>
+	<figcaption>Рис 2. Режим ввода свидетельств</figcaption>
 </figure>
