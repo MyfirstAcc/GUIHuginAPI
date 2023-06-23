@@ -1,4 +1,5 @@
 ﻿using HAPI;
+using Microsoft.Win32.SafeHandles;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
 using System.Globalization;
@@ -25,8 +26,16 @@ namespace WinFormsApp2.Controls
             BackColor = Color.White;
             BorderStyle = BorderStyle.Fixed3D;
             AutoScroll = true;
+
+            this.Height = 5000;
+            this.Width = 1500;
         }
 
+        public void SetZoom(float scale)
+        {
+            zoom = scale;
+            RawDomain();
+        }
 
 
         /// <summary>
@@ -40,7 +49,7 @@ namespace WinFormsApp2.Controls
             try
             {
                 //создание домена, парсинг файла парсером по-умолчанию
-                Domain dom = new Domain("iric_classifie.net", new DefaultClassParseListener());
+                Domain dom = new Domain(path, new DefaultClassParseListener());
 
 
                 if (domain != null && domain.IsAlive() == true)
@@ -57,28 +66,28 @@ namespace WinFormsApp2.Controls
 
         private void RawDomain()
         {
-            Controls.Clear();//очистка области для рисования
+            Controls.Clear();
             NodeList list = domain.GetNodes();
-            //в заиимости от выбранного вида 
+         
             if (view)
-            {//рисуем прямоугольники
+            {//рисуем таблицы
                 foreach (Node node in list)
                     if (node is DiscreteChanceNode)
                         //для дискретных вершины
-                        Controls.Add(new DCMonitor((DiscreteChanceNode)node));
+                        Controls.Add(new DCMonitor((DiscreteChanceNode)node, zoom, zoom));
                     else if (node is ContinuousChanceNode)
                         //для непрерывных вершины
                         Controls.Add(new CCMonitor((ContinuousChanceNode)node));
             }
             else
-            { //рисуем овалы
+            { //рисуем вершины
                 foreach (Node node in list)
                     if (node is DiscreteChanceNode)
                         //для  дискретных вершины
-                        Controls.Add(new VisibleDCNode((DiscreteChanceNode)node));
+                        Controls.Add(new VisibleDCNode((DiscreteChanceNode)node,zoom,zoom));
                     else
-                        //для остальных
-                        Controls.Add(new VisibleNode(node));
+                        //для интервальных
+                        Controls.Add(new VisibleCCNode(node));
 
             }
             Refresh();//вызов базового метода для перересовки элемента
@@ -132,7 +141,7 @@ namespace WinFormsApp2.Controls
 
                             //получение координат для окончания линии
 
-                            Pen pen = new Pen(Color.Black, 1);//перо для рисования
+                            Pen pen = new Pen(Color.CornflowerBlue, 1);//перо для рисования
                             pen.CustomEndCap = new AdjustableArrowCap(7, 7); //рисование стрелки на конце линии
                             PointF interectPoint;
 
@@ -153,91 +162,116 @@ namespace WinFormsApp2.Controls
             catch (Exception eh)
             {
                 MessageBox.Show(eh.Message);
+                
             }
         }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            Debug.WriteLine(e.X.ToString() + " " + e.Y.ToString());
+            if (e.Button == MouseButtons.Left)
+            {
+                Location = new Point(Cursor.Position.X + e.X, Cursor.Position.Y + e.Y);
+            }
+        }
+
+
         /// <summary>
         /// метод для определения координат точек пересечения линии и прямоугольника
         /// </summary>
-        /// <param name="x">точка X начала линии</param>
-        /// <param name="y">точка Y начала линии</param>
-        /// <param name="minX">верхняя X точка прямоугольника </param>
-        /// <param name="minY">верхняя Y точка прямоугольника</param>
-        /// <param name="maxX">нижняя X точка прямоугольника</param>
-        /// <param name="maxY">нижняя Y точка прямоугольника</param>
-        /// <param name="validate">проверка на то, что пересечение есть</param>
+        /// <param name="to">координаты начала линии</param>
+        /// <param name="from">координаты конца линии</param>
         /// <returns>координаты пересечения прямоугольника и линии</returns>
         /// <exception cref="ArgumentException"></exception>
-        private PointF pointOnRect(Node rect, Point from)
+        private PointF pointOnRect(Node to, Point from)
         {
-            float x, y, minX, minY, maxX, maxY;
+            float x, y, XMinimum, Yminimum, XMaximum, YMaximum;
             x = from.X; y = from.Y;
 
-            minX = rect.GetPosition().X;
-            minY = rect.GetPosition().Y;
+            XMinimum = to.GetPosition().X;
+            Yminimum = to.GetPosition().Y;
 
-            maxX = rect.GetPosition().X + domain.GetNodeSize().Width;
-            maxY = rect.GetPosition().Y + domain.GetNodeSize().Height;
+            XMaximum = to.GetPosition().X + domain.GetNodeSize().Width;
+            YMaximum = to.GetPosition().Y + domain.GetNodeSize().Height;
 
-            if (minX < x && x < maxX && minY < y && y < maxY)
+            if (XMinimum < x && x < XMaximum && Yminimum < y && y < YMaximum)
                 throw new ArgumentException("Point " + x + y + "cannot be inside "
-                    + "the rectangle: " + minX + minY + " - " + maxX + maxY + ".");
-            float midX = (minX + maxX) / 2;
-            float midY = (minY + maxY) / 2;
+                    + "the rectangle: " + XMinimum + Yminimum + " - " + XMaximum + YMaximum + ".");
+            float midX = (XMinimum + XMaximum) / 2;
+            float midY = (Yminimum + YMaximum) / 2;
 
-            float m = (midY - y) / (midX - x);
+            float mid = (midY - y) / (midX - x);
 
             if (x <= midX)
             { // проверка левой строны
-                var minXy = m * (minX - x) + y;
-                if (minY <= minXy && minXy <= maxY)
-                    return new PointF(minX, minXy);
+                var minXy = mid * (XMinimum - x) + y;
+                if (Yminimum <= minXy && minXy <= YMaximum)
+                    return new PointF(XMinimum, minXy);
             }
 
             if (x >= midX)
             { // проверка правой стороны
-                var maxXy = m * (maxX - x) + y;
-                if (minY <= maxXy && maxXy <= maxY)
-                    return new PointF(maxX, maxXy);
+                var maxXy = mid * (XMaximum - x) + y;
+                if (Yminimum <= maxXy && maxXy <= YMaximum)
+                    return new PointF(XMaximum, maxXy);
             }
 
             if (y <= midY)
-            { // проверка верха
-                var minYx = (minY - y) / m + x;
-                if (minX <= minYx && minYx <= maxX)
-                    return new PointF(minYx, minY);
+            { // проверка верхней строны
+                var minYx = (Yminimum - y) / mid + x;
+                if (XMinimum <= minYx && minYx <= XMaximum)
+                    return new PointF(minYx, Yminimum);
             }
 
             if (y >= midY)
-            { // проверка низа
-                var maxYx = (maxY - y) / m + x;
-                if (minX <= maxYx && maxYx <= maxX)
-                    return new PointF(maxYx, maxY);
+            { // проверка нижней стороны
+                var maxYx = (YMaximum - y) / mid + x;
+                if (XMinimum <= maxYx && maxYx <= XMaximum)
+                    return new PointF(maxYx, YMaximum);
             }
 
             if (x == midX && y == midY) return new PointF(x, y);
 
-            // навсякий случай
-            throw new ArgumentException("Cannot find intersection for " + x + y
-                + " inside rectangle " + minX + minY + " - " + maxX + maxY + ".");
-
-
+            // если точки не попали в набор случай
+            throw new ArgumentException("Не удается найти пересечение для " + x + y
+                + " внутри прямоугольника " + XMinimum + Yminimum + " - " + XMaximum + YMaximum + ".");
         }
 
+
+        /// <summary>
+        /// Метод преобразования координат
+        /// для отрисовки связей (линий) между узлами в графической библиотеке
+        /// вычисление координат для стрелки 
+        /// </summary>
+        /// <param name="to">координаты начала линии</param>
+        /// <param name="from">координаты коца линии</param>
+        /// <returns>координаты точки пересечния овлов</returns>
         private PointF pointOnCycle(Point to, Point from)
         {
+            //определение масшаба
             float scaleX = domain.GetNodeSize().Width / 2;
             float scaleY = domain.GetNodeSize().Height / 2;
             float scaleCos = (to.X - from.X) * ((float)domain.GetNodeSize().Height
                               / (float)domain.GetNodeSize().Width);
+
+            //sin - разность координат точек
             float scaleSin = to.Y - from.Y;
+            //Нормализация cos и sin,
+            //равный обратной величине квадратного корня от суммы квадратов
             float norm1 = 1f / (float)Math.Sqrt(scaleCos * scaleCos + scaleSin * scaleSin);
             scaleCos *= norm1;
             scaleSin *= norm1;
+            //сos - разность координат точек
             float cos = to.X - from.X;
             float sin = to.Y - from.Y;
+            //Нормализация cos и sin,
+            //равный обратной величине квадратного корня от суммы квадратов
             float norm2 = 1f / (float)Math.Sqrt(cos * cos + sin * sin);
             cos *= norm2;
             sin *= norm2;
+
+            //Координаты X и Y конечной точки (to) вычитаются из вычисленных
+            //преобразований для масштаба и направления связи
             return new PointF(to.X - scaleCos * scaleX - cos - sin,
                 to.Y - scaleSin * scaleY - sin + cos);
         }
@@ -245,6 +279,10 @@ namespace WinFormsApp2.Controls
         public class DCMonitor : FlowLayoutPanel
         {
             private DiscreteChanceNode node;
+            public float zoomX;
+            public float zoomY;
+
+
             protected override CreateParams CreateParams
             {
                 get
@@ -254,14 +292,18 @@ namespace WinFormsApp2.Controls
                     return cp;
                 }
             }
-            public DCMonitor(DiscreteChanceNode dcNode)
+            public DCMonitor(DiscreteChanceNode dcNode, float zoomX, float zoomY)
             {
                 node = dcNode;
+                this.zoomX = zoomX;
+                this.zoomY = zoomY;
+
                 MouseMove += MouseMoveHandler;
                 MouseClick += MouseClickHandler;
                 BackColor = Color.White;
                 BorderStyle = BorderStyle.FixedSingle;
                 AutoScroll = true;
+
                 Width = 160;
                 Height = 130;
                 Label lbl = new Label();
@@ -270,8 +312,10 @@ namespace WinFormsApp2.Controls
                 lbl.MouseMove += MouseMoveHandler;
                 Controls.Add(lbl);
                 for (size_t i = 0; i < node.GetNumberOfStates(); i++)
-                    Controls.Add(new State(node, i));
+                    Controls.Add(new State(node, i,zoomX,zoomY));
                 Location = node.GetPosition();
+                
+
             }
 
             private void MouseClickHandler(object sender, MouseEventArgs e)
@@ -292,83 +336,23 @@ namespace WinFormsApp2.Controls
             private class State : UserControl
             {
                 size_t stateNumber = 0;
+                private float zoomX;
+                private float zoomY;
+
                 DiscreteChanceNode node;
 
-                public State(DiscreteChanceNode dcNode, size_t state)
+                public State(DiscreteChanceNode dcNode, size_t state, float zoomX, float zoomY)
                 {
 
                     Width = 150;
                     Height = 20;
                     BackColor = Color.White;
+                    this.zoomY = zoomY;
+                    this.zoomX = zoomX;
                     stateNumber = state;
                     node = dcNode;
                     MouseDoubleClick += MouseDoubleClickHandler;
-                    MouseClick += MouseClickHandler;
 
-
-                }
-
-                private void MouseClickHandler(object sender, MouseEventArgs e)
-                {
-
-                    if (node.GetName() == "loses")
-                    {
-                        Table table = node.GetTable();
-
-                        table.SetDataItem(1, 0.9);
-
-                        node.GetHomeDomain().Propagate(Domain.Equilibrium.H_EQUILIBRIUM_SUM,
-                                                     Domain.EvidenceMode.H_EVIDENCE_MODE_NORMAL);
-
-                        ((DCMonitor)Parent).RedrawNet();
-                    }
-
-
-
-                    /*Debug.WriteLine("n");
-                    InputBoxValidation valid = delegate (string val)
-                       {
-                           if (val == "")
-                           {
-                               return "Value cannot empty.";
-                           }
-                           if (!(new Regex(@"^\d+,\d+|^\d+$")).IsMatch(val))
-                               return "Error!Numbers only";
-                           return "";
-                       };
-
-
-                    double value = node.GetBelief(stateNumber);
-                    if (InputBox.Show("Введите Mean!", "Введите Mean:", ref value, valid) == DialogResult.OK)
-                    {
-                        node.RetractFindings();
-                        Table table = node.GetTable();
-                        
-
-                        //double t = 1 - value;
-                       h_number_t[] d = new h_number_t[table.GetSize()];
-
-                        for (size_t i = 0; i < table.GetSize(); i++)
-                        {
-                            if (i == stateNumber)
-                            {
-                                d[i] = value;
-                            }
-                            else
-                            {
-                                d[i] = table[i];
-                            }
-                        }
-
-                        table.SetData(d);
-
-                        node.GetHomeDomain().Propagate(Domain.Equilibrium.H_EQUILIBRIUM_SUM,
-                                                       Domain.EvidenceMode.H_EVIDENCE_MODE_NORMAL);
-
-                        ((DCMonitor)Parent).RedrawNet();
-
-                    }
-                    */
                 }
 
                 private void MouseDoubleClickHandler(object sender, MouseEventArgs e)
@@ -396,6 +380,7 @@ namespace WinFormsApp2.Controls
                     {
                         base.OnPaint(e);
                         Graphics g = e.Graphics;
+                        g.ScaleTransform(zoomX, zoomY);
                         Brush fillBrush = node.EvidenceIsEntered() ? Brushes.Red : Brushes.Green;
                         g.FillRectangle(fillBrush, 0, 0, (float)((Width - 1) * node.GetBelief(stateNumber)),
                                         Height - 1);
@@ -444,14 +429,7 @@ namespace WinFormsApp2.Controls
                 Controls.Add(lbl);
                 var rows = new string[] { string.Format("{0, -10} {1, 5}", "Mean", node.GetMean()),
                     string.Format("{0, -10} {1, 5}", "Variance", node.GetVariance()) };
-
-
-               
-                    Controls.Add(new State(node));
-                
-                
-            
-
+                Controls.Add(new State(node));
                 Location = node.GetPosition();
             }
 
@@ -533,10 +511,10 @@ namespace WinFormsApp2.Controls
                         {
                             if (val == "")
                             {
-                                return "Value cannot empty.";
+                                return "Поле не может быть пустым!";
                             }
                             if (!(new Regex(@"^\d+,\d+|^\d+$")).IsMatch(val))
-                                return "Error!Numbers only";
+                                return "Ошибка!Неправильный ввод! (X,XX)";
                             return "";
                         };
                       
@@ -567,7 +545,7 @@ namespace WinFormsApp2.Controls
                         Graphics g = e.Graphics;
                         Brush fillBrush = node.EvidenceIsEntered() ? Brushes.Red : Brushes.Azure;
                         Label lbl = new Label();
-                        lbl.Text = "Мат. ожид: ";
+                        lbl.Text = "Значение вершины: ";
                         txtbox.Location = new Point(0, 20);
                         Debug.WriteLine(row);
                         txtbox.Text = string.Format("{0}",node.GetMean());
@@ -588,12 +566,12 @@ namespace WinFormsApp2.Controls
             private DCMonitor monitor;
             private DiscreteChanceNode node;
 
-            public VisibleDCNode(DiscreteChanceNode dcNode)
+            public VisibleDCNode(DiscreteChanceNode dcNode,float zoomX, float zoomY)
             {
                 node = dcNode;
                 Size = node.GetHome().GetNodeSize();
                 Location = node.GetPosition();
-                monitor = new DCMonitor(node);
+                monitor = new DCMonitor(node,zoomX,zoomY);
 
             }
 
@@ -616,11 +594,11 @@ namespace WinFormsApp2.Controls
             }
         }
 
-        public class VisibleNode : UserControl
+        public class VisibleCCNode : UserControl
         {
             private Node node;
 
-            public VisibleNode(Node theNode)
+            public VisibleCCNode(Node theNode)
             {
                 node = theNode;
                 Size = node.GetHome().GetNodeSize();
@@ -654,13 +632,6 @@ namespace WinFormsApp2.Controls
                 pevent.Graphics.DrawString(node.GetName() + ": " + node.GetAttribute("Alpha"),
                      new Font("Microsoft Sans Serif", 8.25f), Brushes.Black, 10f, Height / 2 - 5);
             }
-        }
-
-
-        private void panel_Paint(object sender, PaintEventArgs e)
-        {
-            Graphics g = e.Graphics;
-            g.ScaleTransform(2, 2);
         }
 
     }

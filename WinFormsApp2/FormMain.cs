@@ -1,4 +1,5 @@
 using HAPI;
+using System.Diagnostics;
 using System.Windows.Forms;
 using WinFormsApp2.Domains;
 
@@ -8,14 +9,14 @@ namespace WinFormsApp2
     {
         private About about = new About();
         string path = Directory.GetCurrentDirectory() + @"/simpleBn.net";
+        private float[] scale = new float[] { 1f, 1.5f, 1.7f, 2f };
+        private short index = 0;
 
         public FormMain()
         {
             InitializeComponent();
             initNet();
         }
-
-
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -47,16 +48,7 @@ namespace WinFormsApp2
 
         private void îÏðîãðàììåToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
             about.ShowDialog();
-        }
-
-
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-
         }
 
         private void checkBox1_Click(object sender, EventArgs e)
@@ -64,9 +56,15 @@ namespace WinFormsApp2
             Open();
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
+        private void buttonZoomIn_Click(object sender, EventArgs e)
+        {          
+            short t = index;
+            huginControl1.SetZoom(scale[(t < scale.Length-1) ? ++index : scale.Length-1]);           
+        }
 
+        private void buttonZoomOut_Click(object sender, EventArgs e)
+        {
+            huginControl1.SetZoom(scale[(index > 0) ? --index : 0]);
         }
     }
 }

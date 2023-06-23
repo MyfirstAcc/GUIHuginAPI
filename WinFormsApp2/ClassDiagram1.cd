@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="WinFormsApp2.Domains.SimpleBN">
-    <Position X="2.75" Y="7" Width="1.75" />
+    <Position X="2.75" Y="7.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>IAAAAAAAAAAACACAAAACAAAAAAAAAAEAAIAAAAAAAAA=</HashCode>
       <FileName>Nets\BAP.cs</FileName>
@@ -11,7 +11,7 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="WinFormsApp2.Domains.BAPCCN2">
-    <Position X="0.75" Y="7" Width="1.5" />
+    <Position X="0.75" Y="7.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>IAAAAAAAAAAACACAAAACAAAAAAAAAAEQAAAAAAAAAAA=</HashCode>
       <FileName>Nets\BAPCCN2.cs</FileName>
@@ -37,7 +37,7 @@
   <Class Name="WinFormsApp2.FormMain">
     <Position X="4" Y="0.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>BQAAAACQACAAoEAAAACHYAACCAAgAAAAAkAACAEAACA=</HashCode>
+      <HashCode>BQAAgACQACAAoEAAAACHYAACKAAgAAAQAgAACAGBACA=</HashCode>
       <FileName>FormMain.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -46,7 +46,7 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="WinFormsApp2.Controls.HuginControl">
-    <Position X="7.75" Y="0.5" Width="2.5" />
+    <Position X="8" Y="0.5" Width="2.5" />
     <Compartments>
       <Compartment Name="Nested Types" Collapsed="false" />
     </Compartments>
@@ -57,7 +57,7 @@
           <Compartment Name="Nested Types" Collapsed="false" />
         </Compartments>
         <NestedTypes>
-          <Class Name="WinFormsApp2.Controls.HuginControl.DCMonitor.State" Collapsed="true">
+          <Class Name="WinFormsApp2.Controls.HuginControl.DCMonitor.State">
             <TypeIdentifier>
               <NewMemberFileName>Controls\HuginControl.cs</NewMemberFileName>
             </TypeIdentifier>
@@ -87,19 +87,19 @@
           <NewMemberFileName>Controls\HuginControl.cs</NewMemberFileName>
         </TypeIdentifier>
       </Class>
-      <Class Name="WinFormsApp2.Controls.HuginControl.VisibleNode">
+      <Class Name="WinFormsApp2.Controls.HuginControl.VisibleCCNode">
         <TypeIdentifier>
           <NewMemberFileName>Controls\HuginControl.cs</NewMemberFileName>
         </TypeIdentifier>
       </Class>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AQAAAAAABAAQIAAAAAACAAAAIAAAAAAAAQAAAAAAAAg=</HashCode>
+      <HashCode>ARAAAAAABAAQIAAAAAACABAAIBAAAAAAAQAAAAAAAAg=</HashCode>
       <FileName>Controls\HuginControl.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="HAPI.Domain" Collapsed="true">
-    <Position X="1.5" Y="4.75" Width="1.5" />
+    <Position X="1.5" Y="5.75" Width="1.5" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>

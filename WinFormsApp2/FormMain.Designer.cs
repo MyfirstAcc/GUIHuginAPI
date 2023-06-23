@@ -37,8 +37,8 @@ namespace WinFormsApp2
             оПрограммеToolStripMenuItem = new ToolStripMenuItem();
             tableLayoutPanel1 = new TableLayoutPanel();
             tableLayoutPanel2 = new TableLayoutPanel();
-            buttonReset = new Button();
             checkBox1 = new CheckBox();
+            buttonReset = new Button();
             buttonZoomIn = new Button();
             buttonZoomOut = new Button();
             huginControl1 = new HuginControl();
@@ -105,13 +105,13 @@ namespace WinFormsApp2
             // 
             tableLayoutPanel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tableLayoutPanel2.ColumnCount = 5;
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60F));
-            tableLayoutPanel2.Controls.Add(buttonReset, 0, 0);
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 60F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 60F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 60F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 60F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel2.Controls.Add(checkBox1, 1, 0);
+            tableLayoutPanel2.Controls.Add(buttonReset, 0, 0);
             tableLayoutPanel2.Controls.Add(buttonZoomIn, 2, 0);
             tableLayoutPanel2.Controls.Add(buttonZoomOut, 3, 0);
             tableLayoutPanel2.Location = new Point(3, 3);
@@ -121,45 +121,46 @@ namespace WinFormsApp2
             tableLayoutPanel2.Size = new Size(743, 55);
             tableLayoutPanel2.TabIndex = 1;
             // 
+            // checkBox1
+            // 
+            checkBox1.Appearance = Appearance.Button;
+            checkBox1.Image = GUIHugin.Properties.Resources.table;
+            checkBox1.Location = new Point(63, 3);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(54, 48);
+            checkBox1.TabIndex = 0;
+            checkBox1.UseVisualStyleBackColor = true;
+            checkBox1.Click += checkBox1_Click;
+            // 
             // buttonReset
             // 
             buttonReset.Image = GUIHugin.Properties.Resources.reload;
             buttonReset.Location = new Point(3, 3);
             buttonReset.Name = "buttonReset";
-            buttonReset.Size = new Size(58, 48);
+            buttonReset.Size = new Size(54, 48);
             buttonReset.TabIndex = 3;
             buttonReset.UseVisualStyleBackColor = true;
             buttonReset.Click += buttonReset_Click;
             // 
-            // checkBox1
-            // 
-            checkBox1.Appearance = Appearance.Button;
-            checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(77, 3);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(54, 30);
-            checkBox1.TabIndex = 4;
-            checkBox1.Text = "Table";
-            checkBox1.UseVisualStyleBackColor = true;
-            checkBox1.Click += checkBox1_Click;
-            // 
             // buttonZoomIn
             // 
             buttonZoomIn.Image = GUIHugin.Properties.Resources.zoom_in32;
-            buttonZoomIn.Location = new Point(151, 3);
+            buttonZoomIn.Location = new Point(123, 3);
             buttonZoomIn.Name = "buttonZoomIn";
-            buttonZoomIn.Size = new Size(58, 48);
+            buttonZoomIn.Size = new Size(54, 48);
             buttonZoomIn.TabIndex = 5;
             buttonZoomIn.UseVisualStyleBackColor = true;
+            buttonZoomIn.Click += buttonZoomIn_Click;
             // 
             // buttonZoomOut
             // 
             buttonZoomOut.Image = GUIHugin.Properties.Resources.zoom_out1;
-            buttonZoomOut.Location = new Point(225, 3);
+            buttonZoomOut.Location = new Point(183, 3);
             buttonZoomOut.Name = "buttonZoomOut";
-            buttonZoomOut.Size = new Size(58, 48);
+            buttonZoomOut.Size = new Size(54, 48);
             buttonZoomOut.TabIndex = 6;
             buttonZoomOut.UseVisualStyleBackColor = true;
+            buttonZoomOut.Click += buttonZoomOut_Click;
             // 
             // huginControl1
             // 
@@ -186,7 +187,6 @@ namespace WinFormsApp2
             menuStrip1.PerformLayout();
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel2.ResumeLayout(false);
-            tableLayoutPanel2.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -202,8 +202,8 @@ namespace WinFormsApp2
         private OpenFileDialog openFileDialog1;
         private ToolStripMenuItem оПрограммеToolStripMenuItem;
         private HuginControl huginControl1;
-        private CheckBox checkBox1;
         private Button buttonZoomIn;
         private Button buttonZoomOut;
+        private CheckBox checkBox1;
     }
 }
