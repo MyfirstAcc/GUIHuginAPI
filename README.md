@@ -3,6 +3,6 @@
 В проекте производиться подключение Hugin API к технологии NET Framework.
 
 Выполнено построение графического интерфейса с помощью платформы пользовательского интерфейса Windows Forms. Разработанное приложение позволяет создавать, читать, визуализировать и проверять домен.
-![Работа приложения. Режим отображения сети](WinFormsApp2/Resources/GUIHugin_iiFiuVoYn5.png)
+![Работа приложения. Режим отображения сети](WinFormsApp2/Resources/GUIHugin_ijFiuVoYn5.png)
 
-![Работа приложения. Режим ввод свидетельств](WinFormsApp2/Resources/GUIHugin_KqblcFiOBe.png)
+![Работа приложения. Режим ввод свидетельств](WinFormsApp2/Resources/GUIHugin_KQbIcFiOBe.png)
