@@ -27,8 +27,8 @@ namespace WinFormsApp2.Controls
             BorderStyle = BorderStyle.Fixed3D;
             AutoScroll = true;
 
-            this.Height = 5000;
-            this.Width = 1500;
+            /*this.Height = 5000;
+            this.Width = 1500;*/
         }
 
         public void SetZoom(float scale)
